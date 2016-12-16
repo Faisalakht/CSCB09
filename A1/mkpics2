@@ -1,0 +1,66 @@
+#!/bin/sh
+echo "<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">"
+echo "<html>"
+echo "	<head>"
+echo "		<title>Pictures</title>"
+echo "	</head>"
+echo ""
+echo "	<body>"
+echo "		<h1>Pictures</h1>"
+columns=$1
+check="JPEG"
+counter=0
+filesh=""
+if [ $2 = \. ];
+then
+	echo  "yes"
+else
+	filesh="$2"/
+fi
+
+
+for folders in "$filesh"* #list the files and folders in the current directory
+do 
+
+
+	if [ -d $folders  ]; #checks if the current directory variable is a folder
+	then
+			header=$(echo $folders| rev | cut -d/ -f1 | rev)
+			counter=0
+		        echo "<h2>$header</h2>"
+       			echo "<table>"
+        		echo "<tr>"
+		for subfolders in "$folders"/* #lists the files in the folder directory
+		do
+			if [ -d $subfoldlders  ]; #checks the cure folders are actual directories
+			then
+				for final in "$subfolders"/* #list  files 
+				do
+					data=`file "$final"`
+					if echo  "$data" | grep -q "$check"; #checks if the file is a JPEG file type
+					then
+
+						if [ $counter -eq  $columns  ] #checks if the columns is filled
+						then
+							echo "</tr>"
+							echo "<tr>"
+							counter=0
+							echo "<td><img src=\"$final\" height=100></td>"
+							counter=`expr $counter + 1`
+						else
+							echo "<td><img src=\"$final\" height=100></td>"
+							counter=`expr $counter + 1`
+						fi
+					fi
+				done
+
+				
+			fi
+		done
+	echo "</tr>"
+	echo "</table>"
+	echo ""
+	fi
+
+done
+echo "</body></html>"

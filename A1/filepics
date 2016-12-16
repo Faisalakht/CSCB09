@@ -1,0 +1,21 @@
+#!/bin/sh
+location=/courses/webspace/cscb09w16/bin/exiftime
+for items in "$1"/* #iterate through each item in the  directory
+do
+typeout=`file "$items" || true`
+check="JPEG"
+
+	if echo "$typeout" | grep -q "$check"; #checks if the file is a JPEG file
+	then
+		checker=`$location -tg "$items"`	#Gets the exiftime data
+		pf1=$(echo $checker | cut -f 2 -d ':') #Gets the year from the Exiftime data
+		pf2=$(echo $checker | cut -f 3 -d ':') #Gets the date form the Exiftime data
+		if [ ! -d $pf1/$pf2 ]; #checks if the directory is not there
+		then
+			mkdir -p $pf1/$pf2 #makes the directory and moves the file
+			mv "$items" $pf1/$pf2 2>/dev/null  # ignores the error of permission denied
+		else
+			mv "$items" $pf1/$pf2 2>/dev/null
+		fi
+	fi
+done

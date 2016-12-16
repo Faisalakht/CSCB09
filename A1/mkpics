@@ -1,0 +1,43 @@
+#!/bin/sh
+echo "<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">"
+echo "<html>"
+echo "	<head>"
+echo "		<title>Pictures</title>"
+echo "	</head>"
+echo ""
+echo "	<body>"
+echo "		<h1>Pictures</h1>"
+echo "<table>"
+echo "<tr>"
+tbls=$1  # Number of Columns
+er=""
+shift
+counter=0
+for name in "$@"; #Iterates through each filename
+do
+	typeout=`file "$name"`
+	check="JPEG"
+	if echo "$typeout" | grep -q "$check"; #Checks if its a JPEG files
+	then
+		if [ $counter -eq $tbls  ]
+		then
+			echo "</tr>"
+			echo "<tr>"
+			counter=0
+			echo "<td><img src=\"$name\" height=100></td>"
+			counter=`expr $counter + 1`
+		else
+			echo "<td><img src=\"$name\" height=100></td>"
+			counter=`expr $counter + 1`
+		fi
+	else
+		er="$er $name" #files that are not JPEG it adds its name to er string
+	fi
+done
+echo "</tr>"
+echo "</table>"
+echo "</body> </html>"
+if [ "$er" != "" ]
+then
+	echo "The following files are not JPEG files:$er" 1>&2 #Shows the files that are not in the JPEG format in the stderror
+fi
